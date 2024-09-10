@@ -9,7 +9,7 @@ encoder = joblib.load("encoder.joblib")
 # Streamlit UI
 st.title("Salary Prediction App")
 
-st.write("Fill in the details to predict if salary is >50K")  # Fix: Add quotes around the string
+st.write("Fill in the details to predict if salary is >50K")
 
 # Create input fields
 age = st.number_input("Age", min_value=0, max_value=100, value=25)

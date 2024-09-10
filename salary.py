@@ -3,8 +3,8 @@ import pandas as pd
 import joblib
 
 # Load the trained model and encoder
-model = joblib.load('salary_prediction_model.joblib')
-encoder = joblib.load('encoder.joblib')
+model = joblib.load('salary_prediction_model.joblib')  # Load KNN model saved earlier
+encoder = joblib.load('encoder.joblib')  # Ensure this file exists
 
 # Streamlit UI
 st.title("Salary Prediction App")

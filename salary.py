@@ -101,8 +101,8 @@ def main():
     
             # Display prediction
             st.success(f'The predicted salary for the provided details is: {predicted_salary}')
-    except Exception as e:
-        st.error(f'An error occurred during prediction: {e}')
+        except Exception as e:
+            st.error(f'An error occurred during prediction: {e}')
 
 if __name__ == '__main__':
     main()

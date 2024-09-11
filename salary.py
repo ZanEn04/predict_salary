@@ -115,7 +115,7 @@ def main():
             elif prediction[0] == 0:
                 predicted_salary = '<=50K'
             else:
-                'error'
+                predicted_salary = '0'
             # Display prediction
             st.success(f'The predicted salary for the provided details is: {predicted_salary}{prediction}')
         except Exception as e:

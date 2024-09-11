@@ -90,7 +90,8 @@ def main():
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
 
             # Ensure the columns match the model's expected feature names
-            final_input_data = final_input_data[model.feature_names_in_]
+            model_feature_names = model.feature_names_in_
+            final_input_data = final_input_data[model_feature_names]  # Reorder or filter columns as needed
 
             # Scale the numeric features
             final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)

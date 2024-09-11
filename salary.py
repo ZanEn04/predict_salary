@@ -29,6 +29,20 @@ native_country_options = ['Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Do
                           'Iran', 'Ireland', 'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 
                           'Philippines', 'Poland', 'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia']
 
+# Suppose you have access to the training data's unique categories or its encoder
+# Fit encoder on the same training data you used before model training
+training_data = pd.DataFrame({
+    'workclass': workclass_options,
+    'education': education_options,
+    'marital-status': marital_status_options,
+    'occupation': occupation_options,
+    'relationship': relationship_options,
+    'race': race_options,
+    'sex': ['Female', 'Male'],  # For simplicity
+    'native-country': native_country_options
+})
+encoder.fit(training_data)
+
 def main():
     st.title('Salary Prediction App')
     st.write('Enter details to predict the salary.')
@@ -67,11 +81,8 @@ def main():
                 'native-country': [native_country]
             })
     
-            # Fit the encoder to all categorical columns
-            categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
-            encoder.fit(input_data[categorical_columns])
-    
             # One-hot encode the categorical features
+            categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
             input_data_encoded = encoder.transform(input_data[categorical_columns])
     
             # Create a DataFrame with encoded columns
@@ -82,9 +93,11 @@ def main():
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
     
             # Align the input columns with the model’s training columns
-            # Assuming the scaler has been fitted earlier on the training data
-            expected_columns = final_input_data.columns.tolist()
-            final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=expected_columns)
+            expected_columns = encoder.get_feature_names_out(categorical_columns).tolist()  # Get the expected feature names from encoder
+            final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)  # Ensure all columns are present
+    
+            # Scale the numeric features
+            final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
     
             # Predict using the trained model
             prediction = model.predict(final_input_data_scaled)

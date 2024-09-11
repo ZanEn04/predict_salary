@@ -53,56 +53,55 @@ def main():
     hours_per_week = st.number_input('Hours Per Week', min_value=1, max_value=100, value=40)
     native_country = st.selectbox('Native Country', native_country_options)
 
-    if st.button('Predict'):
-        try:
-            # Prepare the input data for prediction
-            input_data = pd.DataFrame({
-                'age': [age],
-                'workclass': [workclass],
-                'education': [education],
-                'education-num': [education_num],
-                'marital-status': [marital_status],
-                'occupation': [occupation],
-                'relationship': [relationship],
-                'race': [race],
-                'sex': [sex],
-                'capital-gain': [capital_gain],
-                'capital-loss': [capital_loss],
-                'hours-per-week': [hours_per_week],
-                'native-country': [native_country]
-            })
+   if st.button('Predict'):
+       try:
+        # Prepare the input data for prediction
+        input_data = pd.DataFrame({
+            'age': [age],
+            'workclass': [workclass],  # Include workclass in the input data
+            'education': [education],
+            'education-num': [education_num],
+            'marital-status': [marital_status],
+            'occupation': [occupation],
+            'relationship': [relationship],
+            'race': [race],
+            'sex': [sex],
+            'capital-gain': [capital_gain],
+            'capital-loss': [capital_loss],
+            'hours-per-week': [hours_per_week],
+            'native-country': [native_country]
+        })
 
-            # One-hot encode the categorical features
-            categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
-            input_data_encoded = encoder.transform(input_data[categorical_columns])
+        # One-hot encode the categorical features
+        categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+        input_data_encoded = encoder.transform(input_data[categorical_columns])
 
-            # Create a DataFrame with encoded columns
-            encoded_df = pd.DataFrame(input_data_encoded, columns=encoder.get_feature_names_out(categorical_columns))
+        # Create a DataFrame with encoded columns
+        encoded_df = pd.DataFrame(input_data_encoded, columns=encoder.get_feature_names_out(categorical_columns))
 
-            # Combine encoded features with numeric features
-            numeric_features = input_data.drop(columns=categorical_columns)
-            final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
+        # Combine encoded features with numeric features
+        numeric_features = input_data.drop(columns=categorical_columns)
+        final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
 
-            # Align the input columns with the model’s training columns
-            model_feature_names = scaler.feature_names_in_.tolist()  # Feature names used during training
-            for col in model_feature_names:
-                if col not in final_input_data.columns:
-                    final_input_data[col] = 0  # Add missing columns with zero values
+        # Align the input columns with the model’s training columns
+        missing_cols = set(scaler.feature_names_in_) - set(final_input_data.columns)
+        for col in missing_cols:
+            final_input_data[col] = 0  # Add missing columns and fill them with zeros
 
-            # Reorder columns to match the order used during training
-            final_input_data = final_input_data[model_feature_names]
+        # Reorder columns to match the order used during training
+        final_input_data = final_input_data[scaler.feature_names_in_]
 
-            # Scale the numeric features
-            final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
+        # Scale the numeric features
+        final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
 
-            # Predict using the trained model
-            prediction = model.predict(final_input_data_scaled)
-            predicted_salary = '>50K' if prediction[0] == 1 else '<=50K'
+        # Predict using the trained model
+        prediction = model.predict(final_input_data_scaled)
+        predicted_salary = '>50K' if prediction[0] == 1 else '<=50K'
 
-            # Display prediction
-            st.success(f'The predicted salary for the provided details is: {predicted_salary}')
-        except Exception as e:
-            st.error(f'An error occurred during prediction: {e}')
-
+        # Display prediction
+        st.success(f'The predicted salary for the provided details is: {predicted_salary}')
+    except Exception as e:
+        st.error(f'An error occurred during prediction: {e}')
+        
 if __name__ == '__main__':
     main()

@@ -47,7 +47,7 @@ def main():
 
     # Input fields for the features
     age = st.number_input('Age', min_value=18, max_value=100, value=30)
-    workclass = st.selectbox('Workclass', workclass_options)
+    workclass = st.selectbox('Workclass', workclass_options)  # Include workclass input
     education = st.selectbox('Education', education_options)
     education_num = st.number_input('Education Number', min_value=1, max_value=16, value=10)
     marital_status = st.selectbox('Marital Status', marital_status_options)
@@ -65,6 +65,7 @@ def main():
             # Prepare the input data for prediction
             input_data = pd.DataFrame({
                 'age': [age],
+                'workclass': [workclass],  # Include workclass in the input data
                 'education': [education],
                 'education-num': [education_num],
                 'marital-status': [marital_status],
@@ -79,7 +80,8 @@ def main():
             })
 
             # One-hot encode the categorical features
-            categorical_columns = ['education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+            categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 
+                                   'relationship', 'race', 'sex', 'native-country']
             input_data_encoded = encoder.transform(input_data[categorical_columns])
 
             # Create a DataFrame with encoded columns

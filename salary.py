@@ -3,7 +3,7 @@ import pandas as pd
 from joblib import load
 
 # Load the trained model
-model = load('salary_prediction_model.joblib')
+model = load('RandomForest.joblib')
 
 # Define categories for categorical features
 workclass_options = ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 

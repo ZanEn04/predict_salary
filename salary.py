@@ -57,8 +57,8 @@ def main():
         try:
             # Prepare the input data for prediction
             input_data = pd.DataFrame({
-                'age': [age],  # Define age in the input data
-                'workclass': [workclass],  # Include workclass in the input data
+                'age': [age],
+                'workclass': [workclass],
                 'education': [education],
                 'education-num': [education_num],
                 'marital-status': [marital_status],
@@ -84,12 +84,13 @@ def main():
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
 
             # Align the input columns with the model’s training columns
-            missing_cols = set(scaler.feature_names_in_) - set(final_input_data.columns)
-            for col in missing_cols:
-                final_input_data[col] = 0  # Add missing columns and fill them with zeros
+            model_feature_names = scaler.feature_names_in_.tolist()  # Feature names used during training
+            for col in model_feature_names:
+                if col not in final_input_data.columns:
+                    final_input_data[col] = 0  # Add missing columns with zero values
 
             # Reorder columns to match the order used during training
-            final_input_data = final_input_data[scaler.feature_names_in_]
+            final_input_data = final_input_data[model_feature_names]
 
             # Scale the numeric features
             final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)

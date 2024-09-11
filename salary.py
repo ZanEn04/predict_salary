@@ -5,7 +5,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import Normalizer
 
 # Load the trained model
-model_file = 'RandomForest.joblib'
+model_file = 'NaiveBayes.joblib'
 
 try:
     model = load(model_file)

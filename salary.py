@@ -3,7 +3,7 @@ import pandas as pd
 from joblib import load
 
 # Load the trained model
-model = load('RandomForest.joblib')
+model = load('salary_prediction_model.joblib')
 
 # Define categories for categorical features
 workclass_options = ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 
@@ -70,12 +70,15 @@ def main():
             'native-country': [native_country]
         })
         
-        # Predict using the trained model
-        prediction = model.predict(input_data)
-        predicted_salary = '>50K' if prediction[0] == 1 else '<=50K'
-        
-        # Display prediction
-        st.success(f'The predicted salary for the provided details is: {predicted_salary}')
+        # Check if the model is loaded correctly
+        if hasattr(model, 'predict'):
+            # Predict using the trained model
+            prediction = model.predict(input_data)
+            predicted_salary = '>50K' if prediction[0] == 1 else '<=50K'
+            # Display prediction
+            st.success(f'The predicted salary for the provided details is: {predicted_salary}')
+        else:
+            st.error('Model is not loaded correctly.')
 
 if __name__ == '__main__':
     main()

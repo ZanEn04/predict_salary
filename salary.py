@@ -54,7 +54,7 @@ def main():
     hours_per_week = st.number_input('Hours Per Week', min_value=1, max_value=100, value=40)
     native_country = st.selectbox('Native Country', native_country_options)
 
-    if st.button('Predict'):
+if st.button('Predict'):
     try:
         # Prepare the input data for prediction
         input_data = pd.DataFrame({

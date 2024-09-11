@@ -68,7 +68,7 @@ def main():
             })
     
             # One-hot encode the categorical features
-            categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+            categorical_columns = ['workclass', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
             input_data_encoded = encoder.transform(input_data[categorical_columns])
     
             # Create a DataFrame with encoded columns

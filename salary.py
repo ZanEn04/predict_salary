@@ -17,7 +17,7 @@ except Exception as e:
 
 # Define categories for categorical features
 workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
-education_options = ['1st-4th', '5th-6th', '7th-8th', '9th','10th', '11th', '12th', 'Assoc-acdm', 'Assoc-voc', 
+education_options = ['1st-4th', '5th-6th', '7th-8th', '9th', '10th', '11th', '12th', 'Assoc-acdm', 'Assoc-voc', 
                      'Bachelors', 'Doctorate', 'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college']
 marital_status_options = ['Divorced', 'Married-AF-spouse', 'Married-civ-spouse', 'Married-spouse-absent', 'Never-married', 'Separated', 'Widowed']
 occupation_options = ['Adm-clerical', 'Armed-Forces', 'Craft-repair', 'Exec-managerial', 'Farming-fishing', 'Handlers-cleaners', 'Machine-op-inspct', 
@@ -80,12 +80,7 @@ def main():
 
             # Align the input columns with the model’s training columns
             expected_columns = scaler.feature_names_in_  # Feature names from the scaler
-            missing_cols = set(expected_columns) - set(final_input_data.columns)
-            for col in missing_cols:
-                final_input_data[col] = 0  # Add missing columns and fill them with zeros
-
-            # Reorder columns to match the order used during training
-            final_input_data = final_input_data[expected_columns]
+            final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)
 
             # Scale the numeric features
             final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=expected_columns)

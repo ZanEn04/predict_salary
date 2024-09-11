@@ -1,5 +1,5 @@
-import streamlit as st
 import pandas as pd
+import streamlit as st
 from joblib import load
 
 # Load the trained model, encoder, and scaler
@@ -14,11 +14,6 @@ try:
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
-
-# Check if the loaded model is valid
-if not hasattr(model, 'predict'):
-    st.error("The loaded model is not valid or does not have a 'predict' method.")
-    st.stop()
 
 # Define categories for categorical features
 workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
@@ -84,16 +79,16 @@ def main():
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
 
             # Align the input columns with the model’s training columns
-            model_feature_names = scaler.feature_names_in_.tolist()  # Feature names used during training
-            for col in model_feature_names:
-                if col not in final_input_data.columns:
-                    final_input_data[col] = 0  # Add missing columns with zero values
+            expected_columns = scaler.feature_names_in_  # Feature names from the scaler
+            missing_cols = set(expected_columns) - set(final_input_data.columns)
+            for col in missing_cols:
+                final_input_data[col] = 0  # Add missing columns and fill them with zeros
 
             # Reorder columns to match the order used during training
-            final_input_data = final_input_data[model_feature_names]
+            final_input_data = final_input_data[expected_columns]
 
             # Scale the numeric features
-            final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
+            final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=expected_columns)
 
             # Predict using the trained model
             prediction = model.predict(final_input_data_scaled)

@@ -54,7 +54,7 @@ def main():
             input_data = pd.DataFrame({
                 'age': [age],
                 'workclass': [workclass],
-                'education': [education],
+                'education': 'education_'[education],
                 'education-num': [education_num],
                 'marital-status': [marital_status],
                 'occupation': [occupation],

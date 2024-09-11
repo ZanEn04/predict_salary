@@ -11,6 +11,7 @@ try:
     model = load(model_file)
     encoder = load(encoder_file)
     scaler = load(scaler_file)
+    st.write(type(model))  # This should display a scikit-learn model class like 'RandomForestClassifier'
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files

@@ -38,7 +38,6 @@ def main():
     # Input fields for the features
     age = st.number_input('Age', min_value=18, max_value=100, value=30)
     workclass = st.selectbox('Workclass', workclass_options)
-    fnlwgt = st.number_input('Final Weight', min_value=1, max_value=1_000_000, value=50_000)
     education = st.selectbox('Education', education_options)
     education_num = st.number_input('Education Number', min_value=1, max_value=16, value=10)
     marital_status = st.selectbox('Marital Status', marital_status_options)
@@ -55,8 +54,6 @@ def main():
         # Prepare the input data for prediction
         input_data = pd.DataFrame({
             'age': [age],
-            'workclass': [workclass],
-            'fnlwgt': [fnlwgt],
             'education': [education],
             'education-num': [education_num],
             'marital-status': [marital_status],

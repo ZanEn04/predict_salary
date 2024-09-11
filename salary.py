@@ -54,7 +54,7 @@ def main():
             input_data = pd.DataFrame({
                 'age': [age],
                 'workclass': [workclass],
-                'education': [education],  # Corrected line
+                'education': [education],
                 'education-num': [education_num],
                 'marital-status': [marital_status],
                 'occupation': [occupation],
@@ -68,7 +68,7 @@ def main():
             })
     
             # One-hot encode the categorical features
-            categorical_columns = ['workclass', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+            categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
             input_data_encoded = encoder.transform(input_data[categorical_columns])
     
             # Create a DataFrame with encoded columns

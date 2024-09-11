@@ -1,11 +1,27 @@
 import streamlit as st
 import pandas as pd
 from joblib import load
+import os
 
-# Load the trained model
-model = load('RandomForest.joblib')
-encoder = load('OneHotEncoder.joblib')
-scaler = load('FeatureScaling.joblib')
+# Helper function to check if a file exists
+def check_file_exists(file_path):
+    return os.path.isfile(file_path)
+
+# Load the trained model, encoder, and scaler
+model_file = 'RandomForest.joblib'
+encoder_file = 'OneHotEncoder.joblib'
+scaler_file = 'FeatureScaling.joblib'
+
+# Check if files exist
+if not (check_file_exists(model_file) and check_file_exists(encoder_file) and check_file_exists(scaler_file)):
+    st.error('One or more required files are missing. Please check the file paths.')
+else:
+    try:
+        model = load(model_file)
+        encoder = load(encoder_file)
+        scaler = load(scaler_file)
+    except Exception as e:
+        st.error(f'Error loading files: {e}')
 
 # Define categories for categorical features
 workclass_options = ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 
@@ -53,31 +69,43 @@ def main():
     native_country = st.selectbox('Native Country', native_country_options)
 
     if st.button('Predict'):
-        # Prepare the input data for prediction
-        input_data = pd.DataFrame({
-            'age': [age],
-            'education': [education],
-            'education-num': [education_num],
-            'marital-status': [marital_status],
-            'occupation': [occupation],
-            'relationship': [relationship],
-            'race': [race],
-            'sex': [sex],
-            'capital-gain': [capital_gain],
-            'capital-loss': [capital_loss],
-            'hours-per-week': [hours_per_week],
-            'native-country': [native_country]
-        })
-        
-        # Check if the model is loaded correctly
-        if hasattr(model, 'predict'):
+        try:
+            # Prepare the input data for prediction
+            input_data = pd.DataFrame({
+                'age': [age],
+                'education': [education],
+                'education-num': [education_num],
+                'marital-status': [marital_status],
+                'occupation': [occupation],
+                'relationship': [relationship],
+                'race': [race],
+                'sex': [sex],
+                'capital-gain': [capital_gain],
+                'capital-loss': [capital_loss],
+                'hours-per-week': [hours_per_week],
+                'native-country': [native_country]
+            })
+
+            # One-hot encode the categorical features
+            categorical_columns = ['education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+            encoded_features = encoder.transform(input_data[categorical_columns])
+            encoded_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out(categorical_columns))
+
+            # Combine encoded features with numeric features
+            numeric_features = input_data.drop(columns=categorical_columns)
+            final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
+
+            # Scale the numeric features
+            final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
+
             # Predict using the trained model
-            prediction = model.predict(input_data)
+            prediction = model.predict(final_input_data_scaled)
             predicted_salary = '>50K' if prediction[0] == 1 else '<=50K'
+
             # Display prediction
             st.success(f'The predicted salary for the provided details is: {predicted_salary}')
-        else:
-            st.error('Model is not loaded correctly.')
+        except Exception as e:
+            st.error(f'An error occurred during prediction: {e}')
 
 if __name__ == '__main__':
     main()

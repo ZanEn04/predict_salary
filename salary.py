@@ -16,30 +16,24 @@ except Exception as e:
     st.stop()  # Stop the script if there's an issue with loading files
 
 # Define categories for categorical features
-workclass_options = ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 
-                     'Local-gov', 'State-gov', 'Without-pay', 'Never-worked']
-education_options = ['Bachelors', 'Some-college', '11th', 'HS-grad', 'Prof-school', 
-                     'Assoc-acdm', 'Assoc-voc', '9th', '7th-8th', '12th', 'Masters', 
-                     '1st-4th', '10th', 'Doctorate', '5th-6th', 'Preschool']
-marital_status_options = ['Married-civ-spouse', 'Divorced', 'Never-married', 
-                          'Separated', 'Widowed', 'Married-spouse-absent', 'Married-AF-spouse']
-occupation_options = ['Tech-support', 'Craft-repair', 'Other-service', 'Sales', 
-                      'Exec-managerial', 'Prof-specialty', 'Handlers-cleaners', 
-                      'Machine-op-inspct', 'Adm-clerical', 'Farming-fishing', 
-                      'Transport-moving', 'Priv-house-serv', 'Protective-serv', 
-                      'Armed-Forces']
-relationship_options = ['Wife', 'Own-child', 'Husband', 'Not-in-family', 
-                         'Other-relative', 'Unmarried']
-race_options = ['White', 'Asian-Pac-Islander', 'Amer-Indian-Eskimo', 'Other', 'Black']
-native_country_options = ['United-States', 'Cambodia', 'England', 'Puerto-Rico', 
-                          'Canada', 'Germany', 'Outlying-US(Guam-USVI-etc)', 'India', 
-                          'Japan', 'Greece', 'South', 'China', 'Cuba', 'Iran', 
-                          'Honduras', 'Philippines', 'Italy', 'Poland', 'Jamaica', 
-                          'Vietnam', 'Mexico', 'Portugal', 'Ireland', 'France', 
-                          'Dominican-Republic', 'Laos', 'Ecuador', 'Taiwan', 'Haiti', 
-                          'Columbia', 'Hungary', 'Guatemala', 'Nicaragua', 'Scotland', 
-                          'Thailand', 'Yugoslavia', 'El-Salvador', 'Trinadad&Tobago', 
-                          'Peru', 'Hong', 'Holand-Netherlands']
+workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
+
+education_options = ['1st-4th', '5th-6th', '7th-8th', '9th', '10th', '11th', '12th', 'Assoc-acdm', 'Assoc-voc', 'Bachelors', 
+                     'Doctorate', 'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college']
+
+marital_status_options = ['Divorced', 'Married-AF-spouse', 'Married-civ-spouse', 'Married-spouse-absent', 'Never-married', 'Separated', 'Widowed']
+
+occupation_options = ['Adm-clerical', 'Armed-Forces', 'Craft-repair', 'Exec-managerial', 'Farming-fishing', 'Handlers-cleaners', 'Machine-op-inspct', 
+                      'Other-service', 'Priv-house-serv', 'Prof-specialty', 'Protective-serv', 'Sales', 'Tech-support', 'Transport-moving']
+
+relationship_options = ['Husband', 'Not-in-family', 'Other-relative', 'Own-child', 'Unmarried', 'Wife']
+
+race_options = ['Amer-Indian-Eskimo', 'Asian-Pac-Islander', 'Black', 'Other', 'White']
+
+native_country_options = ['Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Dominican-Republic', 'Ecuador', 'El-Salvador', 'England', 
+                          'France', 'Germany', 'Greece', 'Guatemala', 'Haiti', 'Holand-Netherlands', 'Honduras', 'Hong', 'Hungary', 'India', 'Iran', 'Ireland', 
+                          'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 'Philippines', 'Poland', 
+                          'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia']
 
 def main():
     st.title('Salary Prediction App')
@@ -80,8 +74,7 @@ def main():
             })
 
             # One-hot encode the categorical features
-            categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 
-                                   'relationship', 'race', 'sex', 'native-country']
+            categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
             input_data_encoded = encoder.transform(input_data[categorical_columns])
 
             # Create a DataFrame with encoded columns

@@ -4,7 +4,6 @@ from joblib import load
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import Normalizer
 
-
 # Load the trained model, and initialize the encoder and scaler
 model_file = 'RandomForest.joblib'
 
@@ -18,7 +17,7 @@ except Exception as e:
 
 # Define categories for categorical features
 workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
-education_options = ['1st-4th', '5th-6th', '7th-8th', '9th', '10th', '11th', '12th', 'Assoc-acdm', 'Assoc-voc', 
+education_options = ['10th', '11th', '12th', '1st-4th', '5th-6th', '7th-8th', '9th', 'Assoc-acdm', 'Assoc-voc', 
                      'Bachelors', 'Doctorate', 'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college']
 marital_status_options = ['Divorced', 'Married-AF-spouse', 'Married-civ-spouse', 'Married-spouse-absent', 'Never-married', 'Separated', 'Widowed']
 occupation_options = ['Adm-clerical', 'Armed-Forces', 'Craft-repair', 'Exec-managerial', 'Farming-fishing', 'Handlers-cleaners', 'Machine-op-inspct', 
@@ -68,15 +67,11 @@ def main():
                 'native-country': [native_country]
             })
     
-            # One-hot encode the categorical features
+            # Fit the encoder to all categorical columns
             categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
-            
-            # Fit the encoder on the options
-            encoder.fit([[
-                workclass_options, education_options, marital_status_options, occupation_options, relationship_options, 
-                race_options, ['Female', 'Male'], native_country_options
-            ]])
-            
+            encoder.fit(input_data[categorical_columns])
+    
+            # One-hot encode the categorical features
             input_data_encoded = encoder.transform(input_data[categorical_columns])
     
             # Create a DataFrame with encoded columns
@@ -87,10 +82,8 @@ def main():
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
     
             # Align the input columns with the model’s training columns
-            expected_columns = scaler.feature_names_in_  # Feature names from the scaler
-            final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)  # Ensure all columns are present
-    
-            # Scale the numeric features
+            # Assuming the scaler has been fitted earlier on the training data
+            expected_columns = final_input_data.columns.tolist()
             final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=expected_columns)
     
             # Predict using the trained model

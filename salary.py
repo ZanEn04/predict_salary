@@ -1,27 +1,19 @@
 import streamlit as st
 import pandas as pd
 from joblib import load
-import os
-
-# Helper function to check if a file exists
-def check_file_exists(file_path):
-    return os.path.isfile(file_path)
 
 # Load the trained model, encoder, and scaler
 model_file = 'RandomForest.joblib'
 encoder_file = 'OneHotEncoder.joblib'
 scaler_file = 'FeatureScaling.joblib'
 
-# Check if files exist
-if not (check_file_exists(model_file) and check_file_exists(encoder_file) and check_file_exists(scaler_file)):
-    st.error('One or more required files are missing. Please check the file paths.')
-else:
-    try:
-        model = load(model_file)
-        encoder = load(encoder_file)
-        scaler = load(scaler_file)
-    except Exception as e:
-        st.error(f'Error loading files: {e}')
+try:
+    model = load(model_file)
+    encoder = load(encoder_file)
+    scaler = load(scaler_file)
+except Exception as e:
+    st.error(f'Error loading files: {e}')
+    st.stop()  # Stop the script if there's an issue with loading files
 
 # Define categories for categorical features
 workclass_options = ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 
@@ -88,8 +80,10 @@ def main():
 
             # One-hot encode the categorical features
             categorical_columns = ['education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
-            encoded_features = encoder.transform(input_data[categorical_columns])
-            encoded_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out(categorical_columns))
+            input_data_encoded = encoder.transform(input_data[categorical_columns])
+
+            # Create a DataFrame with encoded columns
+            encoded_df = pd.DataFrame(input_data_encoded, columns=encoder.get_feature_names_out(categorical_columns))
 
             # Combine encoded features with numeric features
             numeric_features = input_data.drop(columns=categorical_columns)

@@ -15,7 +15,7 @@ except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
 
-# Fit the encoder with an example dataset containing all possible categories
+# Simulate training data with all possible categories to fit the encoder
 categories = {
     'workclass': ['Private'],
     'education': ['Bachelors'],
@@ -27,8 +27,6 @@ categories = {
     'native-country': ['United-States']
 }
 training_data = pd.DataFrame(categories)
-
-# Fit the encoder using the simulated training data
 encoder.fit(training_data)
 
 def main():
@@ -77,11 +75,12 @@ def main():
             encoded_df = pd.DataFrame(input_data_encoded, columns=encoder.get_feature_names_out(categorical_columns))
     
             # Combine encoded features with numeric features
-            numeric_features = input_data.drop(columns=categorical_columns)
+            numeric_columns = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
+            numeric_features = input_data[numeric_columns]
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
     
             # Align the input columns with the model’s training columns
-            expected_columns = encoder.get_feature_names_out(categorical_columns).tolist()  # Get the expected feature names from encoder
+            expected_columns = final_input_data.columns  # All feature columns including numeric and encoded features
             final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)  # Ensure all columns are present
     
             # Scale the numeric features

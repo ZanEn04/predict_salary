@@ -40,7 +40,7 @@ def main():
     st.write('Enter details to predict the salary.')
 
     # Input fields for the features
-     age = st.number_input('Age', min_value=18, max_value=100, value=30)  # Define the age variable
+    age = st.number_input('Age', min_value=18, max_value=100, value=30)  # Define the age variable
     workclass = st.selectbox('Workclass', workclass_options)  # Include workclass input
     education = st.selectbox('Education', education_options)
     education_num = st.number_input('Education Number', min_value=1, max_value=16, value=10)

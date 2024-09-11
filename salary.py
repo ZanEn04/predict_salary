@@ -112,11 +112,12 @@ def main():
             #predicted_salary = '>50K' if prediction[0] == 1 else '<=50K'
             if prediction[0] == 1:
                 predicted_salary = '>50K'
-            else:
+            elif prediction[0] == 0:
                 predicted_salary = '<=50K'
-                
+            else
+                'error'
             # Display prediction
-            st.success(f'The predicted salary for the provided details is: {predicted_salary}')
+            st.success(f'The predicted salary for the provided details is: {predicted_salary}'+{prediction})
         except Exception as e:
             st.error(f'An error occurred during prediction: {e}')
 

@@ -42,8 +42,6 @@ if st.button("Predict"):
         'capital-loss': [capital_loss]
     })
 
-    # One-hot encode the input data using the same encoder
-    encoded_input = encoder.transform(input_data)
     
     # Make a prediction
     prediction = model.predict(encoded_input)

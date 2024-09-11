@@ -58,7 +58,6 @@ def main():
     age = st.number_input('Age', min_value=18, max_value=100, value=30)
     workclass = st.selectbox('Workclass', workclass_options)
     education = st.selectbox('Education', education_options)
-    #education_num = st.number_input('Education Number', min_value=1, max_value=16, value=10)
     marital_status = st.selectbox('Marital Status', marital_status_options)
     occupation = st.selectbox('Occupation', occupation_options)
     relationship = st.selectbox('Relationship', relationship_options)
@@ -76,7 +75,6 @@ def main():
                 'age': [age],
                 'workclass': [workclass],
                 'education': [education],
-                #'education-num': [education_num],
                 'marital-status': [marital_status],
                 'occupation': [occupation],
                 'relationship': [relationship],
@@ -96,7 +94,7 @@ def main():
             encoded_df = pd.DataFrame(input_data_encoded, columns=encoder.get_feature_names_out(categorical_columns))
     
             # Combine encoded features with numeric features
-            numeric_columns = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
+            numeric_columns = ['age', 'capital-gain', 'capital-loss', 'hours-per-week']
             numeric_features = input_data[numeric_columns]
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
     

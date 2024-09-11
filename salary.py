@@ -84,13 +84,13 @@ def main():
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
 
             # Align the input columns with the model’s training columns
-            model_features = scaler.feature_names_in_.tolist()  # Make sure to use the feature names from scaler
-            for col in model_features:
+            model_feature_names = scaler.feature_names_in_.tolist()  # Feature names used during training
+            for col in model_feature_names:
                 if col not in final_input_data.columns:
-                    final_input_data[col] = 0  # Add missing columns and fill them with zeros
+                    final_input_data[col] = 0  # Add missing columns with zero values
 
             # Reorder columns to match the order used during training
-            final_input_data = final_input_data[model_features]
+            final_input_data = final_input_data[model_feature_names]
 
             # Scale the numeric features
             final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)

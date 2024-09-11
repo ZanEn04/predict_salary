@@ -9,6 +9,7 @@ scaler_file = 'FeatureScaling.joblib'
 
 try:
     model = load(model_file)
+    print(type(model))  # Check the type of the model object
     encoder = load(encoder_file)
     scaler = load(scaler_file)
 except Exception as e:

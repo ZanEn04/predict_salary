@@ -117,7 +117,7 @@ def main():
             else:
                 'error'
             # Display prediction
-            st.success(f'The predicted salary for the provided details is: {predicted_salary}'+{prediction})
+            st.success(f'The predicted salary for the provided details is: {predicted_salary}{prediction}')
         except Exception as e:
             st.error(f'An error occurred during prediction: {e}')
 

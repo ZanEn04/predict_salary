@@ -27,9 +27,15 @@ categories = {
     'native-country': ['Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Dominican-Republic', 'Ecuador', 'El-Salvador', 'England', 'France', 'Germany', 'Greece', 'Guatemala', 'Haiti', 'Holand-Netherlands', 'Honduras', 'Hong', 'Hungary', 'India', 'Iran', 'Ireland', 'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia']
 }
 
-# Fit the OneHotEncoder on all possible categories
-training_data = pd.DataFrame(categories)
-encoder.fit(training_data)
+# Fit the OneHotEncoder on the list of categories
+encoder.fit([[value] for value in categories['workclass']] +
+            [[value] for value in categories['education']] +
+            [[value] for value in categories['marital-status']] +
+            [[value] for value in categories['occupation']] +
+            [[value] for value in categories['relationship']] +
+            [[value] for value in categories['race']] +
+            [[value] for value in categories['sex']] +
+            [[value] for value in categories['native-country']])
 
 def main():
     st.title('Salary Prediction App')

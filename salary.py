@@ -109,8 +109,12 @@ def main():
     
             # Predict using the trained model
             prediction = model.predict(final_input_data_scaled)
-            predicted_salary = '>50K' if prediction[0] == 1 else '<=50K'
-    
+            #predicted_salary = '>50K' if prediction[0] == 1 else '<=50K'
+            if prediction[0] == 1:
+                predicted_salary = '>50K'
+            else:
+                predicted_salary = '<=50K'
+                
             # Display prediction
             st.success(f'The predicted salary for the provided details is: {predicted_salary}')
         except Exception as e:

@@ -89,6 +89,9 @@ def main():
             numeric_features = input_data.drop(columns=categorical_columns)
             final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
 
+            # Ensure the columns match the model's expected feature names
+            final_input_data = final_input_data[model.feature_names_in_]
+
             # Scale the numeric features
             final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
 

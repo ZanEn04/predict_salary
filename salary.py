@@ -15,32 +15,20 @@ except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
 
-# Define categories for categorical features
-workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
-education_options = ['10th', '11th', '12th', '1st-4th', '5th-6th', '7th-8th', '9th', 'Assoc-acdm', 'Assoc-voc', 
-                     'Bachelors', 'Doctorate', 'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college']
-marital_status_options = ['Divorced', 'Married-AF-spouse', 'Married-civ-spouse', 'Married-spouse-absent', 'Never-married', 'Separated', 'Widowed']
-occupation_options = ['Adm-clerical', 'Armed-Forces', 'Craft-repair', 'Exec-managerial', 'Farming-fishing', 'Handlers-cleaners', 'Machine-op-inspct', 
-                      'Other-service', 'Priv-house-serv', 'Prof-specialty', 'Protective-serv', 'Sales', 'Tech-support', 'Transport-moving']
-relationship_options = ['Husband', 'Not-in-family', 'Other-relative', 'Own-child', 'Unmarried', 'Wife']
-race_options = ['Amer-Indian-Eskimo', 'Asian-Pac-Islander', 'Black', 'Other', 'White']
-native_country_options = ['Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Dominican-Republic', 'Ecuador', 'El-Salvador', 'England', 
-                          'France', 'Germany', 'Greece', 'Guatemala', 'Haiti', 'Holand-Netherlands', 'Honduras', 'Hong', 'Hungary', 'India', 
-                          'Iran', 'Ireland', 'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 
-                          'Philippines', 'Poland', 'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia']
+# Fit the encoder with an example dataset containing all possible categories
+categories = {
+    'workclass': ['Private'],
+    'education': ['Bachelors'],
+    'marital-status': ['Never-married'],
+    'occupation': ['Prof-specialty'],
+    'relationship': ['Not-in-family'],
+    'race': ['White'],
+    'sex': ['Male'],
+    'native-country': ['United-States']
+}
+training_data = pd.DataFrame(categories)
 
-# Suppose you have access to the training data's unique categories or its encoder
-# Fit encoder on the same training data you used before model training
-training_data = pd.DataFrame({
-    'workclass': workclass_options,
-    'education': education_options,
-    'marital-status': marital_status_options,
-    'occupation': occupation_options,
-    'relationship': relationship_options,
-    'race': race_options,
-    'sex': ['Female', 'Male'],  # For simplicity
-    'native-country': native_country_options
-})
+# Fit the encoder using the simulated training data
 encoder.fit(training_data)
 
 def main():
@@ -49,18 +37,18 @@ def main():
 
     # Input fields for the features
     age = st.number_input('Age', min_value=18, max_value=100, value=30)
-    workclass = st.selectbox('Workclass', workclass_options)
-    education = st.selectbox('Education', education_options)
+    workclass = st.selectbox('Workclass', ['Private', 'Federal-gov', 'Local-gov', 'State-gov'])
+    education = st.selectbox('Education', ['Bachelors', 'Masters', 'Doctorate'])
     education_num = st.number_input('Education Number', min_value=1, max_value=16, value=10)
-    marital_status = st.selectbox('Marital Status', marital_status_options)
-    occupation = st.selectbox('Occupation', occupation_options)
-    relationship = st.selectbox('Relationship', relationship_options)
-    race = st.selectbox('Race', race_options)
+    marital_status = st.selectbox('Marital Status', ['Never-married', 'Married-civ-spouse'])
+    occupation = st.selectbox('Occupation', ['Prof-specialty', 'Exec-managerial'])
+    relationship = st.selectbox('Relationship', ['Not-in-family', 'Husband', 'Wife'])
+    race = st.selectbox('Race', ['White', 'Black', 'Asian-Pac-Islander'])
     sex = st.selectbox('Sex', ['Female', 'Male'])
     capital_gain = st.number_input('Capital Gain', min_value=0, max_value=100_000, value=0)
     capital_loss = st.number_input('Capital Loss', min_value=0, max_value=100_000, value=0)
     hours_per_week = st.number_input('Hours Per Week', min_value=1, max_value=100, value=40)
-    native_country = st.selectbox('Native Country', native_country_options)
+    native_country = st.selectbox('Native Country', ['United-States', 'Canada'])
 
     if st.button('Predict'):
         try:

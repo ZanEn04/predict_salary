@@ -70,20 +70,18 @@ def main():
             # One-hot encode the categorical features
             categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
             
-            # Create a DataFrame with all possible categories (including those not in the input)
-            all_categories = pd.DataFrame({col: encoder.categories_[i] for i, col in enumerate(categorical_columns)})
+            # Use the encoder to transform categorical data
+            encoded_categorical = encoder.transform(input_data[categorical_columns])
             
-            # One-hot encode with all possible categories
-            encoded = pd.get_dummies(input_data[categorical_columns], columns=categorical_columns)
-            
-            # Add missing columns with 0 values
-            for col in all_categories.melt()['value']:
-                if col not in encoded.columns:
-                    encoded[col] = 0
+            # Create a DataFrame with the encoded categorical data
+            encoded_df = pd.DataFrame(
+                encoded_categorical.toarray(),
+                columns=encoder.get_feature_names_out(categorical_columns)
+            )
 
             # Combine encoded features with numeric features
             numeric_features = input_data[['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']]
-            final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded], axis=1)
+            final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df], axis=1)
 
             # Ensure all expected columns are present
             expected_columns = scaler.feature_names_in_
@@ -95,7 +93,7 @@ def main():
             final_input_data = final_input_data[expected_columns]
 
             # Scale the features
-            final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=expected_columns)
+            final_input_data_scaled = scaler.transform(final_input_data)
 
             # Predict using the trained model
             prediction = model.predict(final_input_data_scaled)
@@ -105,6 +103,9 @@ def main():
             st.success(f'The predicted salary for the provided details is: {predicted_salary}')
         except Exception as e:
             st.error(f'An error occurred during prediction: {e}')
+            st.error(f'Error details: {str(e)}')
+            st.error(f'Shape of final_input_data: {final_input_data.shape if "final_input_data" in locals() else "Not created"}')
+            st.error(f'Columns in final_input_data: {final_input_data.columns.tolist() if "final_input_data" in locals() else "Not created"}')
 
 if __name__ == '__main__':
     main()

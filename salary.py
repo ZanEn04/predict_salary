@@ -4,6 +4,7 @@ from joblib import load
 
 # Load the trained model
 model = load('RandomForest.joblib')
+encoder = load('OneHotEncoder.joblib')
 
 # Define categories for categorical features
 workclass_options = ['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 

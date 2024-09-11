@@ -36,6 +36,7 @@ max_length = len(native_country_options)
 def pad_list(lst, target_length):
     return (lst * (target_length // len(lst) + 1))[:target_length]
 
+# Dummy data should include all categories for fitting the encoder
 categories_data = {
     'workclass': pad_list(workclass_options, max_length),
     'education': pad_list(education_options, max_length),
@@ -44,7 +45,9 @@ categories_data = {
     'relationship': pad_list(relationship_options, max_length),
     'race': pad_list(race_options, max_length),
     'sex': pad_list(sex_options, max_length),
-    'native-country': native_country_options
+    'native-country': pad_list(native_country_options, max_length),
+    'education-num': [0],  # Example value, adjust as necessary
+    'fnlwgt': [0]          # Example value, adjust as necessary
 }
 
 dummy_data = pd.DataFrame(categories_data)
@@ -85,9 +88,11 @@ def main():
                 'capital-gain': [capital_gain],
                 'capital-loss': [capital_loss],
                 'hours-per-week': [hours_per_week],
-                'native-country': [native_country]
+                'native-country': [native_country],
+                'education-num': [education_num],  # Include this if used in training
+                'fnlwgt': [fnlwgt]                 # Include this if used in training
             })
-    
+
             # One-hot encode the categorical features
             categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
             input_data_encoded = encoder.transform(input_data[categorical_columns])

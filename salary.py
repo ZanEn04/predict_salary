@@ -16,30 +16,34 @@ except Exception as e:
     st.stop()  # Stop the script if there's an issue with loading files
 
 # Define all possible categories (these must match those used during training)
-categories = {
-    'workclass': ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay'],
-    'education': ['10th', '11th', '12th', '1st-4th', '5th-6th', '7th-8th', '9th', 'Assoc-acdm', 'Assoc-voc', 'Bachelors', 'Doctorate', 'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college'],
-    'marital-status': ['Divorced', 'Married-AF-spouse', 'Married-civ-spouse', 'Married-spouse-absent', 'Never-married', 'Separated', 'Widowed'],
-    'occupation': ['Adm-clerical', 'Armed-Forces', 'Craft-repair', 'Exec-managerial', 'Farming-fishing', 'Handlers-cleaners', 'Machine-op-inspct', 'Other-service', 'Priv-house-serv', 'Prof-specialty', 'Protective-serv', 'Sales', 'Tech-support', 'Transport-moving'],
-    'relationship': ['Husband', 'Not-in-family', 'Other-relative', 'Own-child', 'Unmarried', 'Wife'],
-    'race': ['Amer-Indian-Eskimo', 'Asian-Pac-Islander', 'Black', 'Other', 'White'],
-    'sex': ['Female', 'Male'],
-    'native-country': ['Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Dominican-Republic', 'Ecuador', 'El-Salvador', 'England', 'France', 'Germany', 'Greece', 'Guatemala', 'Haiti', 'Holand-Netherlands', 'Honduras', 'Hong', 'Hungary', 'India', 'Iran', 'Ireland', 'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia']
+workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
+education_options = ['10th', '11th', '12th', '1st-4th', '5th-6th', '7th-8th', '9th', 'Assoc-acdm', 'Assoc-voc', 'Bachelors', 'Doctorate', 'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college']
+marital_status_options = ['Divorced', 'Married-AF-spouse', 'Married-civ-spouse', 'Married-spouse-absent', 'Never-married', 'Separated', 'Widowed']
+occupation_options = ['Adm-clerical', 'Armed-Forces', 'Craft-repair', 'Exec-managerial', 'Farming-fishing', 'Handlers-cleaners', 'Machine-op-inspct', 'Other-service', 'Priv-house-serv', 'Prof-specialty', 'Protective-serv', 'Sales', 'Tech-support', 'Transport-moving']
+relationship_options = ['Husband', 'Not-in-family', 'Other-relative', 'Own-child', 'Unmarried', 'Wife']
+race_options = ['Amer-Indian-Eskimo', 'Asian-Pac-Islander', 'Black', 'Other', 'White']
+sex_options = ['Female', 'Male']
+native_country_options = ['Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Dominican-Republic', 'Ecuador', 'El-Salvador', 'England', 
+                          'France', 'Germany', 'Greece', 'Guatemala', 'Haiti', 'Holand-Netherlands', 'Honduras', 'Hong', 'Hungary', 'India', 
+                          'Iran', 'Ireland', 'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 
+                          'Philippines', 'Poland', 'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia']
+
+# Prepare the dummy data for fitting the OneHotEncoder
+# We use lists with equal length (here we just repeat the most common categories for simplicity)
+categories_data = {
+    'workclass': workclass_options * (len(native_country_options) // len(workclass_options)),
+    'education': education_options * (len(native_country_options) // len(education_options)),
+    'marital-status': marital_status_options * (len(native_country_options) // len(marital_status_options)),
+    'occupation': occupation_options * (len(native_country_options) // len(occupation_options)),
+    'relationship': relationship_options * (len(native_country_options) // len(relationship_options)),
+    'race': race_options * (len(native_country_options) // len(race_options)),
+    'sex': sex_options * (len(native_country_options) // len(sex_options)),
+    'native-country': native_country_options
 }
 
-# Combine all possible values into a DataFrame to fit the encoder
-dummy_data = pd.DataFrame({
-    'workclass': categories['workclass'],
-    'education': categories['education'],
-    'marital-status': categories['marital-status'],
-    'occupation': categories['occupation'],
-    'relationship': categories['relationship'],
-    'race': categories['race'],
-    'sex': categories['sex'],
-    'native-country': categories['native-country']
-})
+dummy_data = pd.DataFrame(categories_data)
 
-# Fit the OneHotEncoder on the combined categorical columns
+# Fit the OneHotEncoder on the categorical columns
 encoder.fit(dummy_data)
 
 def main():
@@ -48,18 +52,18 @@ def main():
 
     # Input fields for the features
     age = st.number_input('Age', min_value=18, max_value=100, value=30)
-    workclass = st.selectbox('Workclass', categories['workclass'])
-    education = st.selectbox('Education', categories['education'])
+    workclass = st.selectbox('Workclass', workclass_options)
+    education = st.selectbox('Education', education_options)
     education_num = st.number_input('Education Number', min_value=1, max_value=16, value=10)
-    marital_status = st.selectbox('Marital Status', categories['marital-status'])
-    occupation = st.selectbox('Occupation', categories['occupation'])
-    relationship = st.selectbox('Relationship', categories['relationship'])
-    race = st.selectbox('Race', categories['race'])
-    sex = st.selectbox('Sex', categories['sex'])
+    marital_status = st.selectbox('Marital Status', marital_status_options)
+    occupation = st.selectbox('Occupation', occupation_options)
+    relationship = st.selectbox('Relationship', relationship_options)
+    race = st.selectbox('Race', race_options)
+    sex = st.selectbox('Sex', sex_options)
     capital_gain = st.number_input('Capital Gain', min_value=0, max_value=100_000, value=0)
     capital_loss = st.number_input('Capital Loss', min_value=0, max_value=100_000, value=0)
     hours_per_week = st.number_input('Hours Per Week', min_value=1, max_value=100, value=40)
-    native_country = st.selectbox('Native Country', categories['native-country'])
+    native_country = st.selectbox('Native Country', native_country_options)
 
     if st.button('Predict'):
         try:

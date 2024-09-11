@@ -11,10 +11,14 @@ try:
     model = load(model_file)
     encoder = load(encoder_file)
     scaler = load(scaler_file)
-    st.write(type(model))  # This should display a scikit-learn model class like 'RandomForestClassifier'
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
+
+# Check if the loaded model is valid
+if not hasattr(model, 'predict'):
+    st.error("The loaded model is not valid or does not have a 'predict' method.")
+    st.stop()
 
 # Define categories for categorical features
 workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']

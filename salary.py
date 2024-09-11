@@ -1,16 +1,19 @@
 import pandas as pd
 import streamlit as st
 from joblib import load
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import Normalizer
+
 
 # Load the trained model, encoder, and scaler
 model_file = 'RandomForest.joblib'
-encoder_file = 'OneHotEncoder.joblib'
-scaler_file = 'FeatureScaling.joblib'
+# encoder_file = 'OneHotEncoder.joblib'
+# scaler_file = 'FeatureScaling.joblib'
 
 try:
     model = load(model_file)
-    encoder = load(encoder_file)
-    scaler = load(scaler_file)
+    encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+    scaler = Normalizer()
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files

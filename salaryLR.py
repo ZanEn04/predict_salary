@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 from joblib import load
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import StandardScaler
 
 # Load the trained model
 model_file = 'LogisticRegression.joblib'
@@ -10,7 +10,7 @@ model_file = 'LogisticRegression.joblib'
 try:
     model = load(model_file)
     encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
-    scaler = Normalizer()
+    scaler = StandardScaler()  # Use StandardScaler instead of Normalizer
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
@@ -104,7 +104,7 @@ def main():
             expected_columns = model.feature_names_in_  # Ensure the model gets the correct columns
             final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)  # Ensure all columns are present
     
-            # Scale the numeric features
+            # Standardize the features
             final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
     
             # Predict using the trained model

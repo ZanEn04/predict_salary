@@ -10,7 +10,6 @@ model_file = 'LogisticRegression.joblib'
 try:
     model = load(model_file)
     encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
-    scaler = StandardScaler()  # Use StandardScaler instead of Normalizer
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
@@ -48,8 +47,6 @@ categories_data = {
 }
 
 dummy_data = pd.DataFrame(categories_data)
-
-# Fit the OneHotEncoder on the categorical columns
 encoder.fit(dummy_data)
 
 def main():
@@ -103,14 +100,24 @@ def main():
             # Align the input columns with the model’s training columns
             expected_columns = model.feature_names_in_  # Ensure the model gets the correct columns
             final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)  # Ensure all columns are present
-    
+
+            # Fit the StandardScaler with dummy data for standardization
+            dummy_numerical_data = pd.DataFrame({
+                'age': [30],
+                'capital-gain': [0],
+                'capital-loss': [0],
+                'hours-per-week': [40]
+            })
+            scaler = StandardScaler()
+            scaler.fit(dummy_numerical_data)
+
             # Standardize the features
             final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
     
             # Predict using the trained model
             prediction = model.predict(final_input_data_scaled)
 
-            st.success(f'The predicted salary for the provided details is: {prediction}')
+            st.success(f'The predicted salary for the provided details is: {prediction[0]}')
         except Exception as e:
             st.error(f'An error occurred during prediction: {e}')
 

@@ -1,15 +1,14 @@
 import pandas as pd
 import streamlit as st
 from joblib import load
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 # Load the trained model
 model_file = 'LogisticRegression.joblib'
 
 try:
     model = load(model_file)
-    encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+    encoder = OneHotEncoder(sparse=False, handle_unknown='ignore')
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
@@ -95,27 +94,21 @@ def main():
             # Combine encoded features with numeric features
             numeric_columns = ['age', 'capital-gain', 'capital-loss', 'hours-per-week']
             numeric_features = input_data[numeric_columns]
-            final_input_data = pd.concat([numeric_features.reset_index(drop=True), encoded_df.reset_index(drop=True)], axis=1)
+    
+            # Standardize only the numeric features
+            scaler = StandardScaler()
+            numeric_features_scaled = scaler.fit_transform(numeric_features)
+            numeric_features_scaled_df = pd.DataFrame(numeric_features_scaled, columns=numeric_columns)
+    
+            # Combine the scaled numeric features with encoded categorical features
+            final_input_data = pd.concat([numeric_features_scaled_df, encoded_df.reset_index(drop=True)], axis=1)
     
             # Align the input columns with the model’s training columns
             expected_columns = model.feature_names_in_  # Ensure the model gets the correct columns
-            final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)  # Ensure all columns are present
-
-            # Fit the StandardScaler with dummy data for standardization
-            dummy_numerical_data = pd.DataFrame({
-                'age': [30],
-                'capital-gain': [0],
-                'capital-loss': [0],
-                'hours-per-week': [40]
-            })
-            scaler = StandardScaler()
-            scaler.fit(dummy_numerical_data)
-
-            # Standardize the features
-            final_input_data_scaled = pd.DataFrame(scaler.transform(final_input_data), columns=final_input_data.columns)
+            final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)
     
             # Predict using the trained model
-            prediction = model.predict(final_input_data_scaled)
+            prediction = model.predict(final_input_data)
 
             st.success(f'The predicted salary for the provided details is: {prediction[0]}')
         except Exception as e:

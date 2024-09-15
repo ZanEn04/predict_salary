@@ -3,10 +3,17 @@ import streamlit as st
 from joblib import load
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-# Load the trained model, scaler, and feature names
-model = load('LogisticRegression.joblib')
-scaler = load('scaler.joblib')
-feature_names = load('feature_names.joblib')
+# Load the trained model and feature names
+model_file = 'LogisticRegression.joblib'
+feature_names_file = 'LR_feature_names.joblib'
+
+try:
+    model = load(model_file)
+    feature_names = load(feature_names_file)  # Load the feature names
+    encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+except Exception as e:
+    st.error(f'Error loading files: {e}')
+    st.stop()  # Stop the script if there's an issue with loading files
 
 # Define all possible categories (these must match those used during training)
 workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
@@ -41,7 +48,6 @@ categories_data = {
 }
 
 dummy_data = pd.DataFrame(categories_data)
-encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
 encoder.fit(dummy_data)
 
 def main():
@@ -91,8 +97,9 @@ def main():
             numeric_columns = ['age', 'capital-gain', 'capital-loss', 'hours-per-week']
             numeric_features = input_data[numeric_columns]
     
-            # Standardize only the numeric features using the loaded scaler
-            numeric_features_scaled = scaler.transform(numeric_features)
+            # Standardize only the numeric features
+            scaler = StandardScaler()
+            numeric_features_scaled = scaler.fit_transform(numeric_features)
             numeric_features_scaled_df = pd.DataFrame(numeric_features_scaled, columns=numeric_columns)
     
             # Combine the scaled numeric features with encoded categorical features

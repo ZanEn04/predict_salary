@@ -13,7 +13,6 @@ except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
 
-# Define all possible categories (these must match those used during training)
 workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
 education_options = ['1st-4th', '5th-6th', '7th-8th', '9th', '10th', '11th', '12th', 'Assoc-acdm', 'Assoc-voc', 'Bachelors', 'Doctorate',
                      'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college']
@@ -49,7 +48,7 @@ dummy_data = pd.DataFrame(categories_data)
 encoder.fit(dummy_data)
 
 def main():
-    st.title('Salary Prediction App')
+    st.title('Salary Prediction App (Logistic Regression')
     st.write('Enter details to predict the salary.')
 
     # Input fields for the features

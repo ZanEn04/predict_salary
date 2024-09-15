@@ -49,7 +49,7 @@ dummy_data = pd.DataFrame(categories_data)
 encoder.fit(dummy_data)
 
 def main():
-    st.title('Salary Prediction App (Random Forest)')
+    st.title('Salary Prediction App (Support Vector Machine)')
     st.write('Enter details to predict the salary.')
 
     # Input fields for the features

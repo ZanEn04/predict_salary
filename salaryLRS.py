@@ -11,6 +11,18 @@ try:
     model = load(model_file)
     feature_names = load(feature_names_file)  # Load the feature names
     encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+
+    # Dummy training data to fit the scaler (replace with actual data)
+    # NOTE: For a real application, you should have access to your actual training data
+    # This is just a placeholder to demonstrate fitting the scaler
+    dummy_data = pd.DataFrame({
+        'age': [30],
+        'capital-gain': [0],
+        'capital-loss': [0],
+        'hours-per-week': [40]
+    })
+    scaler = StandardScaler()
+    scaler.fit(dummy_data)  # Fit the scaler on dummy data
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
@@ -97,9 +109,8 @@ def main():
             numeric_columns = ['age', 'capital-gain', 'capital-loss', 'hours-per-week']
             numeric_features = input_data[numeric_columns]
     
-            # Standardize only the numeric features
-            scaler = StandardScaler()
-            numeric_features_scaled = scaler.fit_transform(numeric_features)
+            # Standardize only the numeric features using the fitted scaler
+            numeric_features_scaled = scaler.transform(numeric_features)
             numeric_features_scaled_df = pd.DataFrame(numeric_features_scaled, columns=numeric_columns)
     
             # Combine the scaled numeric features with encoded categorical features

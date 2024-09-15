@@ -99,7 +99,7 @@ def main():
     
             # Standardize only the numeric features
             scaler = StandardScaler()
-            numeric_features_scaled = scaler.fit_transform(numeric_features)
+            numeric_features_scaled = scaler.transform(numeric_features)
             numeric_features_scaled_df = pd.DataFrame(numeric_features_scaled, columns=numeric_columns)
     
             # Combine the scaled numeric features with encoded categorical features

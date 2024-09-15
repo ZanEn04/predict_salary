@@ -3,26 +3,12 @@ import streamlit as st
 from joblib import load
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-# Load the trained model and feature names
+# Load the trained model
 model_file = 'LogisticRegression.joblib'
-feature_names_file = 'LR_feature_names.joblib'
 
 try:
     model = load(model_file)
-    feature_names = load(feature_names_file)  # Load the feature names
     encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
-
-    # Dummy training data to fit the scaler (replace with actual data)
-    # NOTE: For a real application, you should have access to your actual training data
-    # This is just a placeholder to demonstrate fitting the scaler
-    dummy_data = pd.DataFrame({
-        'age': [30],
-        'capital-gain': [0],
-        'capital-loss': [0],
-        'hours-per-week': [40]
-    })
-    scaler = StandardScaler()
-    scaler.fit(dummy_data)  # Fit the scaler on dummy data
 except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # Stop the script if there's an issue with loading files
@@ -63,7 +49,7 @@ dummy_data = pd.DataFrame(categories_data)
 encoder.fit(dummy_data)
 
 def main():
-    st.title('Salary Prediction App (Logistic Regression)')
+    st.title('Salary Prediction App')
     st.write('Enter details to predict the salary.')
 
     # Input fields for the features
@@ -109,15 +95,17 @@ def main():
             numeric_columns = ['age', 'capital-gain', 'capital-loss', 'hours-per-week']
             numeric_features = input_data[numeric_columns]
     
-            # Standardize only the numeric features using the fitted scaler
-            numeric_features_scaled = scaler.transform(numeric_features)
+            # Standardize only the numeric features
+            scaler = StandardScaler()
+            numeric_features_scaled = scaler.fit_transform(numeric_features)
             numeric_features_scaled_df = pd.DataFrame(numeric_features_scaled, columns=numeric_columns)
     
             # Combine the scaled numeric features with encoded categorical features
             final_input_data = pd.concat([numeric_features_scaled_df, encoded_df.reset_index(drop=True)], axis=1)
     
-            # Align the input columns with the model’s training columns using the loaded feature names
-            final_input_data = final_input_data.reindex(columns=feature_names, fill_value=0)
+            # Align the input columns with the model’s training columns
+            expected_columns = model.feature_names_in_  # Ensure the model gets the correct columns
+            final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)
     
             # Predict using the trained model
             prediction = model.predict(final_input_data)

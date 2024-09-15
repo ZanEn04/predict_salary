@@ -3,11 +3,13 @@ import streamlit as st
 from joblib import load
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-# Load the trained model
+# Load the trained model and feature names
 model_file = 'LogisticRegression.joblib'
+feature_names_file = 'LR_feature_names.joblib'
 
 try:
     model = load(model_file)
+    feature_names = load(feature_names_file)  # Load the feature names
     encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
 except Exception as e:
     st.error(f'Error loading files: {e}')
@@ -49,7 +51,7 @@ dummy_data = pd.DataFrame(categories_data)
 encoder.fit(dummy_data)
 
 def main():
-    st.title('Salary Prediction App (Logistic Regression')
+    st.title('Salary Prediction App (Logistic Regression)')
     st.write('Enter details to predict the salary.')
 
     # Input fields for the features
@@ -103,9 +105,8 @@ def main():
             # Combine the scaled numeric features with encoded categorical features
             final_input_data = pd.concat([numeric_features_scaled_df, encoded_df.reset_index(drop=True)], axis=1)
     
-            # Align the input columns with the model’s training columns
-            expected_columns = model.feature_names_in_  # Ensure the model gets the correct columns
-            final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)
+            # Align the input columns with the model’s training columns using the loaded feature names
+            final_input_data = final_input_data.reindex(columns=feature_names, fill_value=0)
     
             # Predict using the trained model
             prediction = model.predict(final_input_data)

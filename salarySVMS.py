@@ -3,7 +3,7 @@ import streamlit as st
 from joblib import load
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-# Load trained model
+# load trained model
 model_file = 'SupportVectorMachine.joblib'
 
 try:
@@ -13,7 +13,6 @@ except Exception as e:
     st.error(f'Error loading files: {e}')
     st.stop()  # stop script if there's an issue loading files
 
-# Dropdown options for the input fields
 workclass_options = ['Federal-gov', 'Local-gov', 'Never-worked', 'Private', 'Self-emp-inc', 'Self-emp-not-inc', 'State-gov', 'Without-pay']
 education_options = ['1st-4th', '5th-6th', '7th-8th', '9th', '10th', '11th', '12th', 'Assoc-acdm', 'Assoc-voc', 'Bachelors', 'Doctorate',
                      'HS-grad', 'Masters', 'Preschool', 'Prof-school', 'Some-college']
@@ -28,7 +27,7 @@ native_country_options = ['Cambodia', 'Canada', 'China', 'Columbia', 'Cuba', 'Do
                           'Iran', 'Ireland', 'Italy', 'Jamaica', 'Japan', 'Laos', 'Mexico', 'Nicaragua', 'Outlying-US(Guam-USVI-etc)', 'Peru', 
                           'Philippines', 'Poland', 'Portugal', 'Puerto-Rico', 'Scotland', 'South', 'Taiwan', 'Thailand', 'Trinadad&Tobago', 'United-States', 'Vietnam', 'Yugoslavia']
 
-# Manually specify expected column order based on the model's training data
+# manually specify expected column (feature's name)
 expected_columns = [
     'age', 'capital-gain', 'capital-loss', 'hours-per-week',
     'workclass_Federal-gov', 'workclass_Local-gov', 'workclass_Never-worked', 'workclass_Private',
@@ -58,11 +57,11 @@ expected_columns = [
     'native-country_United-States', 'native-country_Vietnam', 'native-country_Yugoslavia'
 ]
 
-# Helper function to pad lists to equal lengths
+# helper function, pad lists to equal lengths
 def pad_list(lst, target_length):
     return (lst * (target_length // len(lst) + 1))[:target_length]
 
-# Prepare dummy data to fit OneHotEncoder
+# dummy for fit OneHotEncoder
 max_length = len(native_country_options)
 categories_data = {
     'workclass': pad_list(workclass_options, max_length),
@@ -81,7 +80,6 @@ def main():
     st.title('Salary Prediction App (Support Vector Machine)')
     st.write('Enter details to predict the salary.')
 
-    # Input fields for the user
     age = st.number_input('Age', min_value=18, max_value=100, value=30)
     workclass = st.selectbox('Workclass', workclass_options)
     education = st.selectbox('Education', education_options)
@@ -97,7 +95,6 @@ def main():
 
     if st.button('Predict'):
         try:
-            # Create DataFrame with input data
             input_data = pd.DataFrame({
                 'age': [age],
                 'workclass': [workclass],
@@ -113,27 +110,26 @@ def main():
                 'native-country': [native_country]
             })
     
-            # One-hot encode categorical features
+            # one-hot encode categorical features
             categorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
             input_data_encoded = encoder.transform(input_data[categorical_columns])
             encoded_df = pd.DataFrame(input_data_encoded, columns=encoder.get_feature_names_out(categorical_columns))
     
-            # Combine encoded features with numeric features
+            # combine encoded features with numeric features
             numeric_columns = ['age', 'capital-gain', 'capital-loss', 'hours-per-week']
             numeric_features = input_data[numeric_columns]
     
-            # Standardize numeric features
+            # standardize numeric features
             scaler = StandardScaler()
             numeric_features_scaled = scaler.fit_transform(numeric_features)
             numeric_features_scaled_df = pd.DataFrame(numeric_features_scaled, columns=numeric_columns)
     
-            # Combine scaled numeric features with encoded categorical features
+            # combine scaled numeric features with encoded categorical features
             final_input_data = pd.concat([numeric_features_scaled_df, encoded_df.reset_index(drop=True)], axis=1)
     
-            # Align input columns with expected column order
+            # align input columns with expected column order
             final_input_data = final_input_data.reindex(columns=expected_columns, fill_value=0)
-    
-            # Predict using the trained model
+            
             prediction = model.predict(final_input_data)
 
             st.success(f'The predicted salary for the provided details is: {prediction[0]}')
